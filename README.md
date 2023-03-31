@@ -1,37 +1,42 @@
-# U^2-Net - Portrait matting
-This repository explores possibilities of using the original u^2-net model for portrait matting. The training code is rewritten and optimised for performance and reliability:
-- allow mixed precision training
-- allow channels_last to increase performance on tensor cores (initial observations show a performance increase of roughly 80%)
-- prefetch batches to the GPU
-- more efficient tensor conversations
-- configuration management with hydra
-- tensorboard logging
-- augmentations, dataset weights, suppert for aisegment rgb masks, ...
-- streamlit demo frontend using pymatting for foreground estimations
-- a lot more
+# 1. 运行结果
+1. 下载并将checkpoint.pth放入checkpoints中：[OneDrive](https://1drv.ms/u/s!Am46hiIqzupmhq5V_Zt36ACGjmI6Xg?e=WPhq7y)
 
-I changed the loss function of the original proposal to allow two different kind of masks as ground truth: rough masks and refined masks where refined masks can be for example alpha mattes synthesized using pymatting (my experiments were quite successful). This however is just a proof of concept and the refined masks itself are quite noisy. The different losses are in fact conflicting a bit to each other however initial results show quite interesting results.
+2. 打开get_foreground_demo_X.py（X表示版本，通常取最新的一版），查看并按需求输入单张图片
+3. 运行get_foreground_demoX.py
 
-## Example & pretrained model
 
-![](/docs/sample_1.jpeg) ![](/docs/sample_1_mask.jpeg) ![](/docs/sample_1_blended.jpeg)
 
----
+# 2. 版本信息
+Ver1: 输入图片，输出单张448 x 448的前景图
 
-The model is able to pickup details quite precisely (e.g. hair regions) with very little overshoot however it also shows weaknesses of this training approach e.g. the confusion at the left shoulder. The model has only been trained for a couple of epochs on a synthesized dataset and is not ready for production use. However feel free to re-use it for any similar experiments.
 
-The provided checkpoint is compatible with the original u^2-net implementation and code.
+# 3. train.py：尝试训练
+## 1. 报错信息
+````
+Traceback (most recent call last):
+  File "E:\data\workspace\python\wanxiang-ai\u-2-net-portrait\train.py", line 14, in <module>
+    from torch.utils.tensorboard import SummaryWriter
+  File "E:\Anaconda\envs\u2net\lib\site-packages\torch\utils\tensorboard\__init__.py", line 4, in <module>
+    LooseVersion = distutils.version.LooseVersion
+AttributeError: module 'distutils' has no attribute 'version'
+````
+这个错误是由于在某些 Python 版本中，distutils 不再包含 version 模块。这可能与您当前的环境设置有关。
 
-[OneDrive](https://1drv.ms/u/s!Am46hiIqzupmhq5V_Zt36ACGjmI6Xg?e=WPhq7y)
-
-## Citation
+首先，请尝试升级 setuptools 包：
 ```
-@InProceedings{Qin_2020_PR,
-title = {U2-Net: Going Deeper with Nested U-Structure for Salient Object Detection},
-author = {Qin, Xuebin and Zhang, Zichen and Huang, Chenyang and Dehghan, Masood and Zaiane, Osmar and Jagersand, Martin},
-journal = {Pattern Recognition},
-volume = {106},
-pages = {107404},
-year = {2020}
-}
+pip install --upgrade setuptools
 ```
+然后，尝试再次运行您的代码。如果问题仍然存在，您可以尝试使用以下方法在 E:\Anaconda\envs\u2net\lib\site-packages\torch\utils\tensorboard\__init__.py 文件中进行更改：
+找到以下行：
+```
+LooseVersion = distutils.version.LooseVersion
+```
+
+将其替换为：
+````
+from distutils.version import LooseVersion
+````
+保存文件并重新运行您的代码。这应该解决了问题。
+
+## 2. 训练集路径 (待开发)
+详见：conf/datasets.yaml
