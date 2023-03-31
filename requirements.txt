@@ -1,0 +1,19 @@
+# 一开始安装torch gpu
+# conda install pytorch==1.10.2 torchvision torchaudio -c pytorch -c conda-forge
+
+pynvml
+tensorboard
+Pillow~=9.2.0
+numpy~=1.21.6
+PyYAML
+pandas
+scipy
+streamlit~=1.20.0
+torchsummary
+future
+psutil~=5.9.4
+torch_optimizer
+hydra-core==1.1.0.dev3
+PyMatting~=1.1.8
+torchvision~=0.11.3
+omegaconf~=2.2.0.dev2

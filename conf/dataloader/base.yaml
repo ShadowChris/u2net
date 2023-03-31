@@ -3,7 +3,7 @@ train:
     _target_: torch.utils.data.DataLoader
     pin_memory: False
     drop_last: True
-    shuffle: True
+#    shuffle: True
 
 val:
     _target_: torch.utils.data.DataLoader

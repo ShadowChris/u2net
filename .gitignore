@@ -260,3 +260,8 @@ experiments/*
 
 checkpoints/*
 !checkpoints/.gitkeep
+
+data/input/*
+data/output/*
+data/mask/*
+!.gitkeep

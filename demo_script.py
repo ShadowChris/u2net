@@ -16,6 +16,15 @@ from lib.utils.oom import free_up_memory
 import cv2
 
 
+## 打印图片作为测试
+def cv2plt(img):
+    cv2.imshow("img", cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # print(new_image.astype(np.float32))
+    #  add below code
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
 def create_ui(samples):
     st.sidebar.title('u2net - segmentation')
 
@@ -72,8 +81,9 @@ else:
     model.load_state_dict(checkpoint)
 
 image = Image.open(sample_select).convert('RGB')
-image = square_pad(image, 0)
-image = image.resize((448, 448), Image.ANTIALIAS)
+# image = square_pad(image, 0)
+print(image.size)
+image = image.resize((image.size[0], image.size[1]), Image.ANTIALIAS)
 st.image(image, width=800)
 
 transforms = get_transform()
@@ -89,9 +99,11 @@ with torch.no_grad():
     st.image(alpha_image, width=800)
 
 image = np.asarray(image)
-background = np.zeros(image.shape)
-background[:, :] = [0, 177 / 255, 64 / 255]
-# background[:, :] = [0, 1.0, 1.0]
+# background = np.zeros(image.shape)
+# background[:, :] = [0, 177 / 255, 64 / 255]
+##Option2: 透明背景
+h, w, c = image.shape
+background = np.zeros((h, w, 3))
 
 alpha = y_hat.squeeze().cpu().detach()
 alpha = np.asarray(alpha)
@@ -101,8 +113,8 @@ image = image.astype(np.float32) / 255
 foreground = estimate_foreground_ml(
     image, alpha)  # , n_big_iterations=1, n_small_iterations=1, regularization=10e-10
 
-new_image = blend(foreground, background, alpha)
+new_image = blend(foreground, background, alpha).astype(np.float32)
 st.image(new_image, width=800)
-
+cv2plt(new_image)
 del y_hat
 free_up_memory()
