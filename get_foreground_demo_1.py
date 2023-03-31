@@ -19,6 +19,10 @@ output_path = "data/output"
 
 ckpt_name = "checkpoints/checkpoint.pth"
 
+# 图片采样大小
+# define hyper-parameters
+ref_size = 448
+
 def load_samples(folder_path=input_path):
     assert os.path.isdir(folder_path), f'Unable to open {folder_path}'
     samples = glob(os.path.join(folder_path, f'*.jpg'))
@@ -82,7 +86,7 @@ if __name__ == '__main__':
     # resize image for input
     image = square_pad(image, 0)
     # image = image.resize((im_rw, im_rh), Image.ANTIALIAS)
-    image = image.resize((448, 448), Image.ANTIALIAS)
+    image = image.resize((ref_size, ref_size), Image.ANTIALIAS)
 
     alpha_image = None
     model.eval()
